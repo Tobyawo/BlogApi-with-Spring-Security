@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <title>Java Book - Welcome</title>
+<!--    <link rel="stylesheet" th:href="@{/static/bootstrap.min.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/static/style.css}">-->
+      <link rel="stylesheet" href="/styles.css">
+      <link rel="stylesheet" href="/bootstrap.min.css">
+  </head>
+  <body>
+
+    <div class="container mt-5">
+
+      <div class="row welcome">
+
+        <div class="col-lg-7">
+
+        <img src="" alt="">
+        <h1 class="logo pb-2">Facebook</h1>
+        <h2 class="JavaFacebook mb-5">facebook helps you connect and share <br> with friends and family.</h2>
+        </div>
+
+        <div class="col-lg-5">
+
+         <div class="shadow p-3 mb-5 bg-body rounded">
+
+             <form class="" th:action="@{/login}" method="post" th:object="${user}">
+               <input class="form-control mb-3" type="text" name="" th:field="*{email}" placeholder="Email Address">
+               <input class="form-control" type="password" name="" th:field="*{password}" placeholder="Password">
+               <div class="d-grid gap-2 mt-3">
+               <button type="submit" class="btn btn-primary btn-lg">Log In</button>
+               </div>
+             </form>
+
+           <form class="" th:action="@{/register}" method="get">
+               <p class="text-center mt-2"><a href="#">Forgotten password?</a></p>
+               <div class="divider"></div>
+               <div class="d-grid gap-2 mt-3">
+               <button type="submit" class="btn btn-green btn-lg mt-3 mb-3">Create New Account</button>
+               </div>
+             </form>
+
+         </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <title>Facebook</title>
+<!--  <link rel="stylesheet" th:href="@{/static/bootstrap.min.css}">-->
+<!--  <link rel="stylesheet" th:href="@{/static/style.css}">-->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/bootstrap.min.css">
+  <link rel="stylesheet" href ="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+  <style>
+    /*.small{*/
+    /*  font-size: 12px;*/
+    /*}*/
+    .post-body{
+      width: 520px;
+    }
+    .body{
+      background: #181a1b;
+    }
+
+    .post{
+      color: #fff;
+    }
+
+    .btn a {
+      color: #fff!important;
+    }
+
+    .avatar {
+      border-radius: 100%;
+      width: 150px;
+      height: 150px;
+    }
+
+  </style>
+</head>
+<body class="body">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/home}"><b class="javabook">Facebook</b></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <form class="d-flex w-75">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+
+      <ul class="navbar-nav  mb-2 mb-lg-0 ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href=""></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" th:href="@{/login}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<section class="container mt-3">
+  <div class="row">
+    <div class="col-lg-3 d-md-block">
+      <div class="shadow p-3 mb-5 bg-body rounded text-center mr-4">
+        <img class="avatar mb-3" src="css/image.jpeg" alt="picture"/>
+        <h4 class="my-1" th:text="*{thisUser.firstName + ' ' + thisUser.lastName}"></h4>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="shadow p-3 mb-5 bg-body rounded">
+        <div class="row">
+          <div class="col-lg-1">
+            <img class="post-avatar" src="" alt=""/>
+          </div>
+          <form th:action="@{/post}" method="post" th:object="${newPost}">
+            <div class="col-lg-11">
+              <h5 style="text-align: left">Create New Post</h5>
+              <input type="text" name="message" id="" class="py-3 px-2 form-control" th:field="*{message}"/>
+              <button type="submit" class="btn btn-primary mt-1 btn w-100">Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <h4 class="mb-4 post">Posts</h4>
+      <div class="post-post shadow-none p-3 mb-5 bg-light rounded" th:each="post : ${allPosts}">
+        <div class="row mt-3 mb-5" >
+          <div class="col-lg-2">
+<!--            <div class="" th:text="'@'  + *{post.getUser().getFirstName()}"></div>-->
+<!--          </div>-->
+          <div class="col-lg-10">
+            <h4 class="my-1 small" th:text="*{ '@' + thisUser.firstName}"></h4>
+            <div class="post-body" th:text="*{post.getMessage()}"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3">
+            <a th:href="@{/comment/{postId}(postId=${post.getId()})}" class="btn btn-primary btn-sm button">comment</a>
+          </div>
+          <div class="col-lg-3">
+            <form th:action="@{/like/{id}(id=${post.getId()})}" method="post" th:object="${newPostlike}">
+              <button type="submit" value="" class="btn btn-primary btn-sm button"  th:text="${post.getLikes().size()} + ' ' + Like"></button>
+            </form>
+          </div >
+          <div>
+<!--            <div th:if="${post.getUser().getId() == thisUser.getId()}">-->
+            <a th:href="@{/edit/{postId}(postId=${post.getId()})}" class="btn btn-success btn-sm button">Edit</a>
+          </div>
+          <div class="col-lg-3" style="color: #fff;" >
+            <form th:action="@{/delete/{id}(id=${post.getId()})}" method="post" th:object="${postdelete}">
+              <button type="submit" value="" class="btn btn-danger btn-sm button" >Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+<section class="container">
+  <div class="row">
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+        <li class="page-item active"><a class="page-link" th:href="@{home.html}">1</a></li>
+        <li class="page-item"><a class="page-link" th:href="@{home.html}">Next</a></li>
+      </ul>
+    </nav>
+  </div>
+</section>
+<footer class="text-center mt-5 mb-5"> - 2021</footer>
+</body>
+</html>

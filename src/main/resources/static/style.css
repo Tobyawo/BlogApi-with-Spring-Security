@@ -1,0 +1,54 @@
+body  {
+  background-color: #f0f2f5;
+}
+
+.signup {
+  margin-top: 5%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.signupsuccess {
+  margin-top: 20%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.btn-green {
+  background-color: #55b72d;
+  color: #fff;
+}
+
+.btn-green:hover {
+  color: #fff;
+  background-color: #46a221;
+}
+
+.post-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+  /* outline: solid medium red 3px; */
+}
+
+
+.create-post-icon {
+  width: 25px;
+  height: 25px;
+  border-radius: 20px;
+  background-color: #e4e6eb;
+}
+
+
+.logout {
+  width: 25px;
+  height: 25px;
+  border-radius: 20px;
+  background-color: #e4e6eb;
+}
