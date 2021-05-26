@@ -13,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity(name = "posts")
 public class Post {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +36,7 @@ public class Post {
 //    private int totalcomment;
 
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Comment> comments;
 

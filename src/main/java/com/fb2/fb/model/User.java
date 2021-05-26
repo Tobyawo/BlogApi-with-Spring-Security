@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.List;
 
 //@Data
@@ -15,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity(name = "users")
 public class User {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
@@ -32,9 +33,16 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @JsonIgnore
+//    @JsonIgnore
     @Column(nullable = false)
     private String password;
+
+       @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "relation",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "following_id"))
+    private List<Following> following;
 
 
 
@@ -45,6 +53,7 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
 
 
 

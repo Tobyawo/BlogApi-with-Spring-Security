@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping(path = "/api/v1/commentLike")
 @Api(value="Like Resource Rest Endpoint")
-public class CommentLikeRestController {
+public class CommentLikeController {
 
 
     @Autowired
@@ -27,7 +27,7 @@ public class CommentLikeRestController {
 
 
     @PostMapping("/{commentId}/{Like}")
-    public ResponseEntity<?> likeCommentIndex(@PathVariable("commentId") Long commentId,@PathVariable("Like") String LikeStatus, HttpSession session, CommentLike like) {
+    public ResponseEntity<?> likeCommentIndex(@PathVariable("commentId") Long commentId, @PathVariable("Like") String LikeStatus, HttpSession session, CommentLike like) {
         User userObj = (User) session.getAttribute("user");
         if (userObj == null) {
             throw new ResourceNotFoundException("No User found with in the session");}

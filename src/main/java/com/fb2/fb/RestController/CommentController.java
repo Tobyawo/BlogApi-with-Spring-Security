@@ -8,6 +8,7 @@ import com.fb2.fb.model.User;
 import com.fb2.fb.service.CommentService;
 import com.fb2.fb.service.PostService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1/comment")
 @Api(value="Comment Resource Endpoint")
-public class CommentRestController {
+public class CommentController {
 
     @Autowired
     CommentService commentService;
@@ -29,7 +30,7 @@ public class CommentRestController {
     PostService postService;
 
     @Autowired
-    public CommentRestController(CommentService commentService){
+    public CommentController(CommentService commentService){
         this.commentService = commentService;
     }
 
@@ -66,6 +67,17 @@ public class CommentRestController {
         commentService.editComment(comment1,comment);
         return ResponseEntity.ok().build();
     }
+
+
+
+
+
+
+
+
+
+
+
 
     // working
     @DeleteMapping("/{commentId}")

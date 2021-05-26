@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Locale;
+
 @Service
 public class PostService {
     @Autowired
@@ -45,4 +48,14 @@ public class PostService {
         }
         return false;
     }
+
+
+    public List<Post> searchAll(String keyword) {
+        if (keyword != null) {
+            return postRepository.search(keyword.toLowerCase(Locale.ROOT));
+        }
+        return postRepository.findAll();
+    }
+
+
 }
