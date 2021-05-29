@@ -29,12 +29,8 @@ public class Comment {
     private User user;
 
 
-    //    @Column(nullable = false)
-//    private int totallikes;
-//
-//    @Column(nullable = false)
-//    private int totalcomment;
-
+    @Column(nullable = false)
+    private String createdAt;
 
 
     @JsonIgnore

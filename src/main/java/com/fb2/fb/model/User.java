@@ -21,10 +21,11 @@ public class User {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-
+    @Column
     @ApiModelProperty(notes="first name of the user that shows for Api documentation")
     private String firstName;
 
+    @Column
     @ApiModelProperty(notes="last name of the user that shows for Api documentation")
     private String lastName;
 
@@ -39,9 +40,6 @@ public class User {
 
        @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "relation",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "following_id"))
     private List<Following> following;
 
 
@@ -54,8 +52,22 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+    @Column(nullable = false)
+    private String createdAt;
+
+    private Boolean isDeactivated;
+    private Boolean isDeleted;
+    private String deactivationDate;
 
 
+
+    public User(Long id, String firstName, String lastName, String email, String password) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
 
     @Override
     public String toString() {

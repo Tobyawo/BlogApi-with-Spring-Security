@@ -1,4 +1,3 @@
-
 package com.fb2.fb.RestController;
 
 import com.fb2.fb.Exception.ResourceNotFoundException;
@@ -18,7 +17,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(path = "/api/v1/user")
+@RequestMapping(path = "/api/v1/")
 public class UserController {
 
     UserService userService;
@@ -31,7 +30,7 @@ public class UserController {
     // new user login
     // to manipulate http response status we use the Response entity.
     // incase the value enteed  for id is not found or invalid
-    @PostMapping(path = "user/login", produces = "application/json")
+    @GetMapping(path = "/login", produces = "application/json")
     public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest, HttpSession httpSession){
         User user = userService.getUserByEmail(loginRequest.getEmail());
         if( user== null){
@@ -61,42 +60,44 @@ public class UserController {
 
 
 
-
-
-
-
-
-
-
     @ApiOperation(value = "Get all users on the blog")
-    @GetMapping(path = "/All",
+    @GetMapping(path = "users/",
             produces = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_ATOM_XML_VALUE})
-    @ResponseBody // Springboot uses this to auto convert  our response to Json or Xml format
-    public List<?> getAllBlogUsers(HttpSession session){
-        User authenticatedUser = (User) session.getAttribute("user");
-//        if (authenticatedUser == null) {
-//            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
-        if(userService.getAllUser()==null){
+    @ResponseBody
+    public List<?> getAllBlogUsers(){
+      if(userService.getAllUser()==null){
             throw new ResourceNotFoundException("No user found on this blog" );
         }
 
         List<User> userList = userService.getAllUser();
+        System.out.println("userlist are"+ userList );
         return userList;
     }
 
 
 
 
-//    @ApiOperation(value = "Delete account")
-//    @DeleteMapping("/{userId}")
-//    public ResponseEntity<?> deactivateUserAccount(@PathVariable("userId") Long userId,HttpSession session) {
-//        User userObj = (User) session.getAttribute("user");
-//        if (userObj == null) {
-//            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);}
-//        userService.;
-//        return ResponseEntity.ok().build();
-//    }
+    @ApiOperation(value = "Delete account")
+    @DeleteMapping("user/deactivate")
+    public ResponseEntity<?> deactivateUserAccount(HttpSession session) {
+        User userObj = (User) session.getAttribute("user");
+        if (userObj == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);}
+        userService.delete(userObj);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @ApiOperation(value = "cancel deletion of account")
+    @DeleteMapping("user/cancelDelete")
+    public ResponseEntity<?> cancelDeactivationofUserAccount(HttpSession session) {
+        User userObj = (User) session.getAttribute("user");
+        if (userObj == null) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);}
+        userService.undoDelete(userObj);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

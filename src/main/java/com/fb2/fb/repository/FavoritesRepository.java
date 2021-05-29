@@ -12,10 +12,5 @@ import java.util.List;
 @Repository
 public interface FavoritesRepository  extends JpaRepository<Favorites, Long> {
 Favorites getFavoritePostsByPostTitleAndUser(String postTitle, User user);
-
-//    void deleteAllByPostAndUser(Post post, User user);
-
-//    boolean getFavoritesByUser(User authenticatedUser);
-
     List<Favorites> findAllByUser(User authenticatedUser);
 }

@@ -52,10 +52,6 @@ public class FavoriteController {
             System.out.println("content and title already exist in your favourites");
             throw new ResourceNotFoundException("content and title already exist in your favourites");
         }
-//        } else if(favorites != null && favStatus.equalsIgnoreCase("remove")){
-//            favoriteService.deleteFavorite(fav);
-//            System.err.println("successfully deleted a favourite");
-//        }
 
         return ResponseEntity.ok().build();
     }
@@ -100,28 +96,6 @@ public class FavoriteController {
         return ResponseEntity.ok().build();
     }
 
-//    @DeleteMapping("comment/{commentId}/")
-//    public ResponseEntity<?> deleteFavouriteComment(@PathVariable("commentId") Long commentId, Favorites fav, HttpSession session) {
-//        User userObj = (User) session.getAttribute("user");
-//        if (userObj == null) {
-//            throw new ResourceNotFoundException("No User found with in the session");}
-//        if(!commentService.checkExistence(commentId)){
-//            throw new ResourceNotFoundException("Post not found with id " + commentId);
-//        }
-//        Comment comment = commentService.getCommentById(commentId);
-//        Post post = comment.getPost();
-//        fav.setPostTitle(post.getTitle());
-//        fav.setUser(userObj);
-//        fav.setFavoritePost(comment.getComment());
-//        Favorites favorites = favoriteService.getFavoritesByTitleAndUser(post.getTitle(), userObj);
-//        if(favorites != null){
-//            favoriteService.deleteFavorite(fav);
-//            System.err.println("successfully deleted a favourite");
-//        }
-//        return ResponseEntity.ok().build();
-//    }
-
-
 
 
 
@@ -132,7 +106,6 @@ public class FavoriteController {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser == null) {
             throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
-//        checkExistence
         if(favoriteService.findAllFavoritesByUser(authenticatedUser).size()==0){
             throw new ResourceNotFoundException("No favorites found for the user" );
         }

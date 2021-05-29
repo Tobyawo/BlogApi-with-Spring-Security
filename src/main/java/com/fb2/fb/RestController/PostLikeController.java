@@ -2,6 +2,7 @@ package com.fb2.fb.RestController;
 
 
 import com.fb2.fb.Exception.ResourceNotFoundException;
+import com.fb2.fb.model.Favorites;
 import com.fb2.fb.model.Post;
 import com.fb2.fb.model.PostLike;
 import com.fb2.fb.model.User;
@@ -15,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -35,29 +33,45 @@ public class PostLikeController {
     PostLikeService likeService;
 
 
-    @PostMapping("/{postId}/{Like}")
-    public ResponseEntity<?> likeIndex(@PathVariable("postId") Long postId,@PathVariable("Like") String LikeStatus, HttpSession session, PostLike like) {
+    @PostMapping("/{postId}")
+    public ResponseEntity<?> likePost(@PathVariable("postId") Long postId, HttpSession session, PostLike like) {
         User userObj = (User) session.getAttribute("user");
         if (userObj == null) {
             throw new ResourceNotFoundException("No User found with in the session");}
-            if(!postService.checkExistence(postId)){
-                throw new ResourceNotFoundException("Post not found with id " + postId);
-            }
-            Post post = postService.getPostById(postId);
-            PostLike postLike = likeService.getPostLikeByPostAndUser(post, userObj);
-            like.setPost(post);
-            like.setUser(userObj);
-            if (postLike == null && LikeStatus.equalsIgnoreCase("Like")) {
-                likeService.addLike(like);
-                System.err.println("successfully like a post");
-            } else if(postLike != null && LikeStatus.equalsIgnoreCase("UnLike")){
-                likeService.deleteLike(postLike);
-                System.err.println("successfully Unlike a post");
-            }
+        if(!postService.checkExistence(postId)){
+            throw new ResourceNotFoundException("Post not found with id " + postId);
+        }
+        Post post = postService.getPostById(postId);
+        PostLike postLike = likeService.getPostLikeByPostAndUser(post, userObj);
+        like.setPost(post);
+        like.setUser(userObj);
+        if (postLike == null) {
+            likeService.addLike(like);
+            System.err.println("successfully like a post");
+        }
+        return ResponseEntity.ok().build();
+    }
 
-         return ResponseEntity.ok().build();
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> unLikePost(@PathVariable("postId") Long postId, HttpSession session, PostLike like) {
+        User userObj = (User) session.getAttribute("user");
+        if (userObj == null) {
+            throw new ResourceNotFoundException("No User found with in the session");
+        }
+        if (!postService.checkExistence(postId)) {
+            throw new ResourceNotFoundException("Post not found with id " + postId);
+        }
+        Post post = postService.getPostById(postId);
+        PostLike postLike = likeService.getPostLikeByPostAndUser(post, userObj);
+        if (postLike != null) {
+            likeService.deleteLike(postLike);
+            System.err.println("successfully Unlike a post");
+        }return ResponseEntity.ok().build();
     }
 
 
 
-}
+    }
+
+
+

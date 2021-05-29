@@ -1,7 +1,6 @@
 package com.fb2.fb.service;
 
 import com.fb2.fb.model.Favorites;
-import com.fb2.fb.model.Post;
 import com.fb2.fb.model.User;
 import com.fb2.fb.repository.FavoritesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +22,6 @@ public class FavoriteService {
         favoritesRepository.save(favorites);
     }
 
-    public void deleteFavorite(Favorites favorites) {
-        favoritesRepository.delete(favorites);
-    }
-
 
     public List<Favorites> findAllFavoritesByUser(User authenticatedUser) {
         return favoritesRepository.findAllByUser(authenticatedUser);
@@ -42,5 +37,9 @@ public class FavoriteService {
 
     public void deleteFavoriteById(Long favoriteId) {
         favoritesRepository.deleteById(favoriteId);
+    }
+
+    public void deleteFavorite(Favorites favorites) {
+        favoritesRepository.delete(favorites);
     }
 }

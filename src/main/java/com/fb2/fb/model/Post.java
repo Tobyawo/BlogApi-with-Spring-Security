@@ -29,11 +29,9 @@ public class Post {
     @Column(nullable = false)
     private String message;
 
-//    @Column(nullable = false)
-//    private int totallikes;
-//
-//    @Column(nullable = false)
-//    private int totalcomment;
+    @Column(nullable = false)
+    private String createdAt;
+
 
 
     @JsonIgnore
@@ -44,12 +42,30 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostLike> likes;
 
+    public Post(long id, String createdAt, String title, String message) {
+   this.id =id;
+   this.createdAt=createdAt;
+   this.title=title;
+   this.message=message;
+    }
+
+
+    public Post(Long id, User user, String title, String message, String createdAt) {
+        this.id = id;
+        this.user = user;
+        this.title = title;
+        this.message = message;
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Post{" +
                 "id=" + id +
-                ", userrr=" + user +
-                ", messageee='" + message + '\'' +
+                ", user=" + user +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", createdAt='" + createdAt + '\'' +
                 '}';
     }
 

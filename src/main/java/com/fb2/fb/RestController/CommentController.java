@@ -8,16 +8,10 @@ import com.fb2.fb.model.User;
 import com.fb2.fb.service.CommentService;
 import com.fb2.fb.service.PostService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/comment")
@@ -34,27 +28,18 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    //working
-    @PostMapping(path = "/{postId}/{commentbody}")
-    public ResponseEntity<?> createComment(@PathVariable("postId") Long postId,@PathVariable("commentbody") String comment, HttpSession session) {
+    @PostMapping(path = "/{postId}")
+    public ResponseEntity<?> createComment(@PathVariable("postId") Long postId,@RequestBody Comment comment, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser == null) {
             throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );
         }
         Post post =  postService.getPostById(postId);
-//        Post post = postService.getPostById(postId);
-        System.err.println("i got here");
-        Comment comment1 = new Comment();
-        comment1.setComment(comment);
-        comment1.setPost(post);
-//        comment1.setUser(authenticatedUser);
-        commentService.addComment(comment1);
+        comment.setPost(post);
+        commentService.addComment(comment);
         return ResponseEntity.ok().build();
     }
 
-
-
-    //working
     @PutMapping("/{commentId}/{commentbody}")
     public ResponseEntity<?> updateComment(@PathVariable("commentId")long commentId,@PathVariable("commentbody") String comment,  HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -68,18 +53,6 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    // working
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable (name = "commentId") Long commentId) {
         if(!commentService.checkExistence(commentId)){

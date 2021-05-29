@@ -23,12 +23,5 @@ public class Following {
     @JoinColumn(name = "following_id")
     private User user2;
 
-//    public Following() {
-//    }
-
-//    public Following(User from, User to) {
-//        this.from = from;
-//        this.to = to;
-//    }
 
 }

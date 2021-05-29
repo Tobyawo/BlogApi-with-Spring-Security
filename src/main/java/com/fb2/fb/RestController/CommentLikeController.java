@@ -24,10 +24,8 @@ public class CommentLikeController {
     CommentLikeService commentLikeService;
 
 
-
-
-    @PostMapping("/{commentId}/{Like}")
-    public ResponseEntity<?> likeCommentIndex(@PathVariable("commentId") Long commentId, @PathVariable("Like") String LikeStatus, HttpSession session, CommentLike like) {
+    @PostMapping("/{commentId}")
+    public ResponseEntity<?> likeComment(@PathVariable("commentId") Long commentId, HttpSession session, CommentLike like) {
         User userObj = (User) session.getAttribute("user");
         if (userObj == null) {
             throw new ResourceNotFoundException("No User found with in the session");}
@@ -40,21 +38,31 @@ public class CommentLikeController {
         CommentLike commentLike = commentLikeService.getCommentLikeByCommentAndUser(comment, userObj);
         like.setComment(comment);
         like.setUser(userObj);
-        if (commentLike == null && LikeStatus.equalsIgnoreCase("Like")) {
+        if (commentLike == null) {
             commentLikeService.addLike(like);
             System.err.println("successfully like a comment");
-
-        } else if(commentLike != null && LikeStatus.equalsIgnoreCase("UnLike")){
-            commentLikeService.deleteLike(commentLike);
-            System.err.println("successfully Unlike a comment");
-
         }
-
         return ResponseEntity.ok().build();
     }
 
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> unlikeComment(@PathVariable("commentId") Long commentId, HttpSession session, CommentLike commentlike) {
+        User userObj = (User) session.getAttribute("user");
+        if (userObj == null) {
+            throw new ResourceNotFoundException("No User found with in the session");
+        }
+        if(!commentService.checkExistence(commentId)){
+            throw new ResourceNotFoundException("Comment not found with id " + commentId);
+        }
+        Comment comment = commentService.getCommentById(commentId);
+        CommentLike commentLike = commentLikeService.getCommentLikeByCommentAndUser(comment, userObj);
 
+        if(commentLike != null ){
+            commentLikeService.deleteLike(commentLike);
+            System.err.println("successfully Unlike a comment");
+        }return ResponseEntity.ok().build();
+    }
 
 
 }

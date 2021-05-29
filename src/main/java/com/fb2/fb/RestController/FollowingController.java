@@ -4,7 +4,6 @@ package com.fb2.fb.RestController;
 import com.fb2.fb.Exception.ResourceNotFoundException;
 import com.fb2.fb.model.Favorites;
 import com.fb2.fb.model.Following;
-import com.fb2.fb.model.Post;
 import com.fb2.fb.model.User;
 import com.fb2.fb.service.FollowingService;
 import com.fb2.fb.service.UserService;
@@ -14,8 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
+
 @RestController
-@RequestMapping(path = "/api/v1/following")
+@RequestMapping(path = "/api/v1/follow")
 public class FollowingController {
 
     @Autowired
@@ -23,6 +23,11 @@ public class FollowingController {
 
     @Autowired
     FollowingService followingService;
+
+    @Autowired
+    public FollowingController(FollowingService followingService){
+        this.followingService = followingService;
+    }
 
 
 
@@ -64,6 +69,8 @@ public class FollowingController {
         System.err.println("successfully unfollow a user");
         return ResponseEntity.ok().build();
     }
+
+
 
 
 }

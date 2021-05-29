@@ -1,43 +1,36 @@
 package com.fb2.fb.RestController;
 
 
+import com.fb2.fb.Constants.AppConstants;
 import com.fb2.fb.Exception.ResourceNotFoundException;
 import com.fb2.fb.model.Comment;
 import com.fb2.fb.model.Post;
 import com.fb2.fb.model.User;
+import com.fb2.fb.model.request.PagedResponse;
 import com.fb2.fb.repository.CommentRepository;
 import com.fb2.fb.repository.FavoritesRepository;
+import com.fb2.fb.repository.FollowingRepository;
 import com.fb2.fb.repository.PostRepository;
-import com.fb2.fb.service.CommentService;
-import com.fb2.fb.service.FavoriteService;
-import com.fb2.fb.service.PostService;
-import com.fb2.fb.service.UserService;
+import com.fb2.fb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+
 
 @RestController
 @RequestMapping(path = "/api/v1/post")
 @Api(value="Post Resource Rest Endpoint")
 public class PostController {
-    UserService userService;
     PostService postService;
-    CommentService commentService;
-    FavoriteService favoriteService;
 
     @Autowired
     public PostController(PostService postService){
@@ -47,12 +40,19 @@ public class PostController {
     CommentRepository commentRepository;
 
     @Autowired
+    FollowingService followingService;
+
+    @Autowired
     PostRepository postRepository;
 
     @Autowired
     FavoritesRepository favoritesRepository;
 
-    //the user make a post working
+    @Autowired
+    FollowingRepository followingRepository;
+
+
+
     @ApiOperation(value = "Adds new Post")
     @ApiResponses(value= {@ApiResponse(code = 100,message = "i will check the message for 100 code error later"),
             @ApiResponse(code = 100,message = "i will check the message for 100 code error later"),
@@ -62,30 +62,22 @@ public class PostController {
     @PostMapping(path = "/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     @ResponseBody
     public ResponseEntity<?> newPost( @RequestBody Post post,HttpSession session) {
-//    public ResponseEntity<?> newPost(@PathVariable("Title") String title,@PathVariable("postContent") String postContent, HttpSession session) {
 
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser == null) {
             return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
         }
-//        Post post = new Post();
-//        post.setTitle(title);
         post.setUser(authenticatedUser);
-//        post.setMessage(postContent);
         System.err.println(post);
         System.err.println(authenticatedUser);
         postService.addPost(post, authenticatedUser);
-//        Post post1 = postService.getPostById(post.getId());
-//        if (post1 == null) {
-//            return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
-//        }
-        return new ResponseEntity<Post>(post, HttpStatus.OK);
+        return new ResponseEntity< >(post, HttpStatus.OK);
     }
 
 
     @ApiOperation(value = "Get all posts of the user")
     @GetMapping(path = "/posts", produces = "application/json")
-    @ResponseBody // Springboot uses this to auto convert  our response to Json or Xml format
+    @ResponseBody
     public List<Post> getAllUserPost(HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser == null) {
@@ -93,53 +85,42 @@ public class PostController {
         if(postRepository.findPostByUser(authenticatedUser)==null){
             throw new ResourceNotFoundException("No post found for the user" );
         }
-
      List<Post> postList = postRepository.findPostByUser(authenticatedUser);
-
+        System.out.println("user in session is "+ authenticatedUser);
         System.err.println("listof posts by users are " + postList);
         return postList;
     }
-//
-//    @ApiOperation(value = "Get all posts of the user's connections")
-//    @GetMapping(path = "/followingPosts", produces = "application/json")
-//    @ResponseBody // Springboot uses this to auto convert  our response to Json or Xml format
-//    public List<Post> getAllUsersConnectionPost(HttpSession session){
-//        User authenticatedUser = (User) session.getAttribute("user");
-//        if (authenticatedUser == null) {
-//            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
-//        if(postRepository.findPostByUser(authenticatedUser)==null){
-//            throw new ResourceNotFoundException("No post found for the user" );
-//        }
-//
-//        List<Post> postList = postRepository.findPostByUser(authenticatedUser);
-//
-//        System.err.println("listof posts by users are " + postList);
-//        return postList;
-//    }
 
-    //
-    @ApiOperation(value = "Get all posts on the blog")
-    @GetMapping(path = "/BlogPosts",
-            produces = {MediaType.APPLICATION_JSON_VALUE,
-                    MediaType.APPLICATION_ATOM_XML_VALUE})
-    @ResponseBody // Springboot uses this to auto convert  our response to Json or Xml format
-    public List<?> getAllBlogPost(HttpSession session){
+    @ApiOperation(value = "Get all posts of the user's connections")
+    @GetMapping(path = "/connectionsPosts", produces = "application/json")
+    @ResponseBody
+    public List<Post> getAllUsersConnectionPost(HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
-//        if (authenticatedUser == null) {
-//            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
-        if(postService.getAllPost()==null){
-            throw new ResourceNotFoundException("No post found on this blog" );
+        if (authenticatedUser == null) {
+            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
+        List<User> myConnectedUsers = followingService.usersConnections(authenticatedUser);
+        if(myConnectedUsers==null){
+            throw new ResourceNotFoundException("You have no connection" );}
+       List<Post> connectionsPosts = new ArrayList<>();
+        for (User user:myConnectedUsers) {
+            List<Post> userpost = postRepository.findPostByUser(user);
+            connectionsPosts.addAll(userpost);
         }
-
-        List<Post> postList = (List<Post>) postService.getAllPost();
-        return postList;
+        if(connectionsPosts==null){
+            throw new ResourceNotFoundException("No Post found for all your connections" );
+        }
+        return  connectionsPosts;
     }
 
-//    @GetMapping("/BlogPosts2")
-//    public Page<Post> getPosts(Pageable pageable) {
-//        return postRepository.findAll(pageable);
-//    }
 
+
+    @ApiOperation(value = "Get all posts on the blog")
+    @GetMapping("/BlogPosts")
+    public ResponseEntity<PagedResponse<Post>> getAllPosts(
+            @RequestParam(value = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
+        PagedResponse<Post> response = postService.getAllPosts(page, size);
+        return new ResponseEntity< >(response, HttpStatus.OK); }
 
 
     @ApiOperation(value = "Get post by the post ID")
@@ -147,23 +128,18 @@ public class PostController {
     @ResponseBody
     public ResponseEntity<Post> getPostById(@PathVariable("postId")long postId, HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
-//        if (authenticatedUser == null) {
-//            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
+        if (authenticatedUser == null) {
+            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
         if(!postService.checkExistence(postId)){
             throw new ResourceNotFoundException("Post not found with id " + postId);
         }
-
-
         Post post = postService.getPostById(postId);
-
-        System.err.println(post);
-//        return post;
-        return new ResponseEntity<Post>(post, HttpStatus.OK);
+        return new ResponseEntity< >(post, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get all comments by the post ID")
     @GetMapping(path = "/{postId}/comments", produces = "application/json")
-    @ResponseBody // Springboot uses this to auto convert  our response to Json or Xml format
+    @ResponseBody
     public List<String> getAllCommentsPostById(@PathVariable("postId")long postId, HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser == null) {
@@ -187,23 +163,6 @@ public class PostController {
     }
 
 
-//    @ApiOperation(value = "Updates post content")
-//    @PutMapping("/{postId}/{postContent}")
-//    public ResponseEntity<Post> updatePost(@PathVariable(name ="postId")long postId,@PathVariable("postContent") String postContent,  HttpSession session) {
-//        User authenticatedUser = (User) session.getAttribute("user");
-//        if (authenticatedUser == null) {
-//            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
-//        if(!postService.checkExistence(postId)){
-//            throw new ResourceNotFoundException("Post not found with id " + postId);
-//        }
-//        Post post = postService.getPostById(postId);
-//        post.setMessage(postContent);
-//        postService.addPost(post,authenticatedUser);
-//        return new ResponseEntity<Post>(post, HttpStatus.OK);
-//    }
-
-
-
     @ApiOperation(value = "Updates post content")
     @PutMapping("/{postId}/")
     public ResponseEntity<Post> updatePost(@PathVariable(name ="postId")long postId,@RequestBody Post post,  HttpSession session) {
@@ -215,11 +174,10 @@ public class PostController {
         }
         Post post1 = postService.getPostById(postId);
         post1.setMessage(post.getMessage());
+        post1.setTitle(post.getTitle());
         postService.addPost(post1,authenticatedUser);
-        return new ResponseEntity<Post>(post, HttpStatus.OK);
+        return new ResponseEntity< >(post, HttpStatus.OK);
     }
-
-
 
 
 
@@ -234,24 +192,33 @@ public class PostController {
     }
 
 
-
-
-
-
-    @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<Post>> searchForPost(@PathVariable(name ="keyword") String keyword) {
-        List listPost = postService.searchAll(keyword);
-        return new ResponseEntity<List<Post>>(listPost, HttpStatus.OK);
-
-    }
-
-//    	<div class="sidebar-widget"><h2 class="widgettitle">Search</h2>
-//<form role="search" method="get" id="searchform" class="searchform" action="https://seths.blog/">
-//				<div>
-//					<label class="screen-reader-text" for="s">Search for:</label>
-//					<input type="text" value="starting and finishing" name="s" id="s" />
-//					<input type="submit" id="searchsubmit" value="" />
-//				</div>
-//			</form></div>
 }
+
+
+
+
+
+
+
+
+
+
+    //
+
+//    @GetMapping(path = "/BlogPosts",
+//            produces = {MediaType.APPLICATION_JSON_VALUE,
+//                    MediaType.APPLICATION_ATOM_XML_VALUE})
+//    @ResponseBody // Springboot uses this to auto convert  our response to Json or Xml format
+//    public List<Post> getAllBlogPost(HttpSession session){
+//        User authenticatedUser = (User) session.getAttribute("user");
+////        if (authenticatedUser == null) {
+////            throw new ResourceNotFoundException("No user found in the session please make sure you are logged in" );}
+//        if(postService.getAllPost()==null){
+//            throw new ResourceNotFoundException("No post found on this blog" );
+//        }
+//
+//        List<Post> postList = (List<Post>) postService.getAllPost();
+//        return  postList;
+//    }
+
 
