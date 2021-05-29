@@ -7,6 +7,10 @@ import com.fb2.fb.model.request.LoginRequest;
 import com.fb2.fb.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,19 +64,18 @@ public class UserController {
 
 
 
+
+
     @ApiOperation(value = "Get all users on the blog")
-    @GetMapping(path = "users/",
+    @GetMapping(path = "/users",
             produces = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_ATOM_XML_VALUE})
     @ResponseBody
-    public List<?> getAllBlogUsers(){
-      if(userService.getAllUser()==null){
+    public Page<?> getAllBlogUserswithPagination(@PageableDefault(sort="id",direction = Sort.Direction.DESC, size=10) Pageable page){
+        if(userService.getAllUser(page)==null){
             throw new ResourceNotFoundException("No user found on this blog" );
         }
-
-        List<User> userList = userService.getAllUser();
-        System.out.println("userlist are"+ userList );
-        return userList;
+        return userService.getAllUser(page);
     }
 
 

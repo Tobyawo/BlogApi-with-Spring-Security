@@ -3,6 +3,9 @@ package com.fb2.fb.service;
 import com.fb2.fb.model.User;
 import com.fb2.fb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -35,10 +38,12 @@ public class UserService {
         return userRepository.getUserById(userId);
     }
 
-    public List<User> getAllUser() {
+    public List<User> AllUser() {
         return userRepository.findAll();
     }
-
+    public Page<User> getAllUser(Pageable page) {
+        return userRepository.findAll(page);
+    }
 
     public Boolean checkUserExistenceById(Long userId){
         if(userRepository.existsById(userId)){
