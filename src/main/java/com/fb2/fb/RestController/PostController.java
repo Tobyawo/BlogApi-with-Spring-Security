@@ -27,7 +27,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(path = "/api/v1/post")
+@RequestMapping(path = "/api/v1/")
 @Api(value="Post Resource Rest Endpoint")
 public class PostController {
     PostService postService;
@@ -59,7 +59,7 @@ public class PostController {
             @ApiResponse(code = 200,message = "ok..Good Job"),
             @ApiResponse(code = 404,message = "Why resources not found"),
             @ApiResponse(code = 500,message = "What the hell is wrong with my server")})
-    @PostMapping(path = "/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
+    @PostMapping(path = "post/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     @ResponseBody
     public ResponseEntity<?> newPost( @RequestBody Post post,HttpSession session) {
 
@@ -76,7 +76,7 @@ public class PostController {
 
 
     @ApiOperation(value = "Get all posts of the user")
-    @GetMapping(path = "/posts", produces = "application/json")
+    @GetMapping(path = "post/posts", produces = "application/json")
     @ResponseBody
     public List<Post> getAllUserPost(HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
@@ -92,7 +92,7 @@ public class PostController {
     }
 
     @ApiOperation(value = "Get all posts of the user's connections")
-    @GetMapping(path = "/connectionsPosts", produces = "application/json")
+    @GetMapping(path = "post/connectionsPosts", produces = "application/json")
     @ResponseBody
     public List<Post> getAllUsersConnectionPost(HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
@@ -113,9 +113,10 @@ public class PostController {
     }
 
 
+//Role base Authentication: allowed for only admin
 
     @ApiOperation(value = "Get all posts on the blog")
-    @GetMapping("/BlogPosts")
+    @GetMapping("admin/BlogPosts")
     public ResponseEntity<PagedResponse<Post>> getAllPosts(
             @RequestParam(value = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
             @RequestParam(value = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
@@ -124,7 +125,7 @@ public class PostController {
 
 
     @ApiOperation(value = "Get post by the post ID")
-    @GetMapping(path = "/{postId}", produces = "application/json")
+    @GetMapping(path = "post/{postId}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<Post> getPostById(@PathVariable("postId")long postId, HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
@@ -138,7 +139,7 @@ public class PostController {
     }
 
     @ApiOperation(value = "Get all comments by the post ID")
-    @GetMapping(path = "/{postId}/comments", produces = "application/json")
+    @GetMapping(path = "post/{postId}/comments", produces = "application/json")
     @ResponseBody
     public List<String> getAllCommentsPostById(@PathVariable("postId")long postId, HttpSession session){
         User authenticatedUser = (User) session.getAttribute("user");
@@ -164,7 +165,7 @@ public class PostController {
 
 
     @ApiOperation(value = "Updates post content")
-    @PutMapping("/{postId}/")
+    @PutMapping("post/{postId}/")
     public ResponseEntity<Post> updatePost(@PathVariable(name ="postId")long postId,@RequestBody Post post,  HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser == null) {
@@ -182,7 +183,7 @@ public class PostController {
 
 
     @ApiOperation(value = "Delete post by the post ID")
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("post/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
         if(!postService.checkExistence(postId)){
             throw new ResourceNotFoundException("Post not found with id " + postId);

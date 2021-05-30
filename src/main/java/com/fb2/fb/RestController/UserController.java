@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(path = "/api/v1/")
+@RequestMapping(path = "/api/v1")
 public class UserController {
 
     UserService userService;
@@ -31,9 +31,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    // new user login
-    // to manipulate http response status we use the Response entity.
-    // incase the value enteed  for id is not found or invalid
+
+
     @GetMapping(path = "/login", produces = "application/json")
     public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest, HttpSession httpSession){
         User user = userService.getUserByEmail(loginRequest.getEmail());
@@ -65,9 +64,9 @@ public class UserController {
 
 
 
-
+//allowed for only admin
     @ApiOperation(value = "Get all users on the blog")
-    @GetMapping(path = "/users",
+    @GetMapping(path = "/admin/users",
             produces = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_ATOM_XML_VALUE})
     @ResponseBody
@@ -82,7 +81,7 @@ public class UserController {
 
 
     @ApiOperation(value = "Delete account")
-    @DeleteMapping("user/deactivate")
+    @DeleteMapping("/user/deactivate")
     public ResponseEntity<?> deactivateUserAccount(HttpSession session) {
         User userObj = (User) session.getAttribute("user");
         if (userObj == null) {
@@ -93,7 +92,7 @@ public class UserController {
 
 
     @ApiOperation(value = "cancel deletion of account")
-    @DeleteMapping("user/cancelDelete")
+    @DeleteMapping("/user/cancelDelete")
     public ResponseEntity<?> cancelDeactivationofUserAccount(HttpSession session) {
         User userObj = (User) session.getAttribute("user");
         if (userObj == null) {
