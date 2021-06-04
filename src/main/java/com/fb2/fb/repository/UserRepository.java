@@ -7,11 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User getUserByEmail(String email);
-    Boolean findByEmail(String email);
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByUserName(String username);
+    User findByEmailAndPassword(String email, String password);
 
     User getUserByEmailAndPassword(String email, String password);
 

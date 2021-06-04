@@ -22,18 +22,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1")
-public class UserController {
+public class UserRestController {
 
     UserService userService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserRestController(UserService userService){
         this.userService = userService;
     }
 
 
 
-    @GetMapping(path = "/login", produces = "application/json")
+    @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest, HttpSession httpSession){
         User user = userService.getUserByEmail(loginRequest.getEmail());
         if( user== null){
@@ -64,9 +64,9 @@ public class UserController {
 
 
 
-//allowed for only admin
+// only admin and admin trainees is allowed can get all blogposts
     @ApiOperation(value = "Get all users on the blog")
-    @GetMapping(path = "/admin/users",
+    @GetMapping(path = "/users",
             produces = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_ATOM_XML_VALUE})
     @ResponseBody
@@ -80,6 +80,7 @@ public class UserController {
 
 
 
+// users deactivating his/her account
     @ApiOperation(value = "Delete account")
     @DeleteMapping("/user/deactivate")
     public ResponseEntity<?> deactivateUserAccount(HttpSession session) {

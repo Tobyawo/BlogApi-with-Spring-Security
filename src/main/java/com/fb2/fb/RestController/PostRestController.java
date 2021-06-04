@@ -29,11 +29,11 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1/")
 @Api(value="Post Resource Rest Endpoint")
-public class PostController {
+public class PostRestController {
     PostService postService;
 
     @Autowired
-    public PostController(PostService postService){
+    public PostRestController(PostService postService){
         this.postService = postService;
     }
     @Autowired

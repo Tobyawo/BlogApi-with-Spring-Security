@@ -30,13 +30,25 @@ public class User {
     private String lastName;
 
 
+
+
     @ApiModelProperty(notes="Email of the user that shows for Api documentation")
     @Column(unique = true, nullable = false)
     private String email;
 
-//    @JsonIgnore
+    @Column
+    @ApiModelProperty(notes="username name of the user that shows for Api documentation")
+    private String userName;
+
+
+
+    //    @JsonIgnore
     @Column(nullable = false)
     private String password;
+
+    @Column
+    @ApiModelProperty(notes="username name of the user that shows for Api documentation")
+    private String roles;
 
        @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)

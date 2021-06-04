@@ -27,12 +27,26 @@ public class PostService {
     PostRepository postRepository;
 
 
+
     public Iterable<Post> getAllPost() {
         return postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
+
+    public List<Post> listAll() {
+        List<Post> listOfPost = postRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return listOfPost;
+    }
+
+
     public List<Post> getListofPost() {
         return postRepository.findAll();
+    }
+
+    public List<Post> listAllByUser(User user) {
+        List<Post> listOfPost = postRepository.findAllByUser(user);
+        Collections.reverse(listOfPost);
+        return listOfPost;
     }
 
     public void addPost(Post post, User user) {
@@ -41,9 +55,22 @@ public class PostService {
         postRepository.save(post);
     }
 
+
+//    public void save(Post post, User user) {
+//        post.setUser(user);
+//        postRepository.save(post);
+//    }
+
     public Post getPostById(Long id) {
         return postRepository.getPostById(id);
     }
+
+
+//
+//    public Post getPostById(Long id){
+//        return postRepository.getPostByPostId(id);
+//    }
+
 
     public void deletePost(Post post) {
         postRepository.delete(post);
@@ -52,6 +79,10 @@ public class PostService {
 
     public void delete(long postId) {
         postRepository.deleteById(postId);
+    }
+
+    public Post get(long postid) {
+        return postRepository.findById(postid).get();
     }
 
 
@@ -68,6 +99,8 @@ public class PostService {
         }
         return false;
     }
+
+
 
 
     public List<Post> searchAll(String keyword) {
@@ -114,5 +147,25 @@ public class PostService {
             throw new BadRequestException("Page size must not be greater than " + AppConstants.MAX_PAGE_SIZE);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    public void updatePostContentById(Post post) {
+    }
+
+
+
+
+
+
 
 }

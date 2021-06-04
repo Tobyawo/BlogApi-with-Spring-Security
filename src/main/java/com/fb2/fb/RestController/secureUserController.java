@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(path = "/admin/")
-public class AdminController {
+@RequestMapping(path = "/api/v1/")
+public class secureUserController {
 
     UserService userService;
 
     @Autowired
-    public AdminController(UserService userService){
+    public secureUserController(UserService userService){
         this.userService = userService;
     }
 
@@ -34,7 +34,6 @@ public class AdminController {
     @ApiOperation(value = "Get all users on the blog")
     @GetMapping(path = "users")
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ADMINTRAINEE')")    //using annotations to defining getting authorities for admin and trainee
     @ResponseBody
     public Page<?> getAllBlogUserswithPagination(@PageableDefault(sort="id",direction = Sort.Direction.DESC, size=10) Pageable page){
         if(userService.getAllUser(page)==null){
@@ -47,18 +46,16 @@ public class AdminController {
 
 
     //new user signup
-    @GetMapping(path = "adminProfile", produces = "application/json")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ADMINTRAINEE')")
+    @GetMapping(path = "view1", produces = "application/json")
     public ResponseEntity<String> checkAdminProfile(){
-        System.out.println("Only admins can see admin profiles");
+        System.out.println("anyone can come here to see view1");
         return ResponseEntity.ok().build();
     }
 
     //new user signup
-    @PostMapping(path = "addNewAdmin", produces = "application/json")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ADMINTRAINEE')")
+    @PostMapping(path = "view2", produces = "application/json")
     public ResponseEntity<?> signUpUserANewAdmin(){
-        System.out.println("Only admins can see list of admins");
+        System.out.println("anyone can come to view 2");
         return ResponseEntity.ok().build();
     }
 
@@ -66,15 +63,7 @@ public class AdminController {
 
 
 
-    // only admin can delete/deactivate an
-    @ApiOperation(value = "Delete account")
-    @DeleteMapping("deactivate/{userId}")
-    @PreAuthorize("hasAuthority('admin:delete')")  //using annotations to defining delete authority for admin only
-    public ResponseEntity<?> deactivateUserAccountByAdmin(@PathVariable(name="userId") Long userId) {
-        userService.delete(userId);
-        System.out.println(" only admin has authority to delete. not a trainee admin");
-        return ResponseEntity.ok().build();
-    }
+
 
 
 

@@ -15,6 +15,24 @@ public class CommentLikeService {
     public CommentLike getCommentLikeByCommentAndUser(Comment comment, User userObj) {
         return commentLikeRepository.getCommentLikeByCommentAndUser(comment, userObj);
     }
+//
+//    public void addLike(CommentLike like) {
+//        commentLikeRepository.save(like);
+//    }
+//
+//
+//    public void deleteLike(CommentLike like) {
+//        commentLikeRepository.delete(like);
+//    }
+
+
+    public CommentLike getCommentLikeByPostAndUser(Comment comment, User user) {
+        return commentLikeRepository.getCommentLikeByCommentAndUser(comment, user);
+    }
+
+//    public CommentLike getCommentLikeByCommentAndUser(Comment comment, User userObj) {
+//        return commentLikeRepository.getCommentLikeByCommentAndUser(comment, userObj);
+//    }
 
     public void addLike(CommentLike like) {
         commentLikeRepository.save(like);
@@ -24,4 +42,7 @@ public class CommentLikeService {
     public void deleteLike(CommentLike like) {
         commentLikeRepository.delete(like);
     }
+
+
+
 }

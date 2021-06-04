@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping(path = "/api/v1/postLike")
 @Api(value="Post Resource Rest Endpoint")
-public class PostLikeController {
+public class PostLikeRestController {
 
 
     @Autowired

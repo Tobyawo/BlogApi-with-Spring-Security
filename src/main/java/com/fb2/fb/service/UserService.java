@@ -4,8 +4,8 @@ import com.fb2.fb.model.User;
 import com.fb2.fb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -21,19 +22,45 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+@Autowired
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
     }
 
+
+
+
+//    public void addUser(User user) {
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setCreatedAt(getDate());
+//        userRepository.save(user);
+//    }
     public void addUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(getDate());
         userRepository.save(user);
     }
 
+
     public User getUserByEmailAndPassword(String email, String password) {
-        return userRepository.getUserByEmailAndPassword(email, password);
+        User user = userRepository.getUserByEmailAndPassword(email, passwordEncoder.encode(password));
+        return  user;
     }
+
+//    public User getUserByEmailAndPassword(String email, String password) {
+//        User user = userRepository.getUserByEmailAndPassword(email, passwordEncoder.encode(password));
+//        return  user;
+//    }
+
+
+
     public User getUserById(Long userId) {
         return userRepository.getUserById(userId);
     }
@@ -90,6 +117,29 @@ public class UserService {
                 userRepository.save(user);
             }
         });
+    }
+
+
+
+
+    public void save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreatedAt(getDate());
+        userRepository.save(user);
+    }
+
+    public User get(long id){
+        return userRepository.findById(id).get();}
+
+
+
+    public void delete(long id) {
+        userRepository.deleteById(id);
+    }
+
+    public Optional<User> getUserById(long userid) {
+        Optional<User> newuser = userRepository.findById(userid);
+        return newuser;
     }
 
 

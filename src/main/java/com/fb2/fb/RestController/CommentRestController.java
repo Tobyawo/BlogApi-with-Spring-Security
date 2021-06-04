@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping(path = "/api/v1/comment")
 @Api(value="Comment Resource Endpoint")
-public class CommentController {
+public class CommentRestController {
 
     @Autowired
     CommentService commentService;
@@ -24,7 +24,7 @@ public class CommentController {
     PostService postService;
 
     @Autowired
-    public CommentController(CommentService commentService){
+    public CommentRestController(CommentService commentService){
         this.commentService = commentService;
     }
 
